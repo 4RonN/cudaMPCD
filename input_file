@@ -1,7 +1,7 @@
 
         -------- general settings ------
 
-        directory data/sy100_sw3_cyaf0_1
+        directory  data/poiseuille_flow/
         
         experiment              standart
         volume_size           10  10 100
@@ -16,10 +16,10 @@
 
         ---------- simulation ----------
 
-        equilibration_steps        10000
-        steps                      10000
+        equilibration_steps        50000
+        steps                     100000
         sample_every                   1 
-        average_samples_over       10000 
+        average_samples_over      100000 
         write_backup                  no 
         read_backup                   no 
         cuda_device                    0

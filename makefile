@@ -39,5 +39,5 @@ $(BUILDDIR)/h5cpp.o: h5cpp.cpp h5cpp.hpp
 	$(CC) $(CPP_FLAGS) -Wno-unused-parameter h5cpp.cpp -c -o $@ 
 
 clean: 
-	rm -f *.o
+	rm -f $(BUILDDIR)/*.o
 

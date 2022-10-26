@@ -1,5 +1,5 @@
-#ifndef __MATH_BLAS_HPP
-#define __MATH_BLAS_HPP
+#ifndef __VEKTOR_TYPE_HPP
+#define __VEKTOR_TYPE_HPP
 
 #include <cassert>
 #include <cmath>
@@ -256,4 +256,4 @@ namespace math
 }
 
 #undef __target__ 
-#endif // __MATH_BLAS_HPP
+#endif // __VEKTOR_TYPE_HPP
