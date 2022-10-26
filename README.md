@@ -25,7 +25,6 @@ plot( profile ) # will show a parabola
 L = 100
 g = 0.0001
 n = 10
-ν = η / 10
 Δt = 0.02
 
 # viscosity measurement:
@@ -38,7 +37,22 @@ println( "theoretical: " η_theo, ", measured:", η )
 ```
 The last line prints the two values of the fluid viscosity "theoretical: 37.50, measured: 37.27"
 
+If you find this repository helpful, please consider citing our article (doi.org/10.1063/5.0037934)
+```
+@article{zantop2021multi,
+  title={Multi-particle collision dynamics with a non-ideal equation of state. I},
+  author={Zantop, Arne W and Stark, Holger},
+  journal=JCP,
+  volume={154},
+  number={2},
+  pages={024105},
+  year={2021},
+  publisher={AIP Publishing LLC}
+}
+```
+
 Dependencies: CUDA, HDF5
 
 TODO: add references (papers)
+
 
