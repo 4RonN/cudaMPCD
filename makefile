@@ -6,7 +6,7 @@ CUDA_FLAGS := -std=c++17 -ccbin g++ --compiler-options -Wall,-Wextra -arch=sm_61
 LIB := -L $(CUDA)/lib64 -lcudart 
 INC := -I $(CUDA)/include 
 
-OBJECTS := main.o cuda_allocator.o simulation_context.o gpu_functions.o gpu_constants.o h5cpp.o
+OBJECTS := main.o cuda_allocator.o simulation_context.o gpu_functions.o extended_collision.o gpu_constants.o h5cpp.o 
 OBJECTS := $(addprefix $(BUILDDIR)/,$(OBJECTS))
 all: CPP_FLAGS += -O3 -DNDEBUG
 all: CUDA_FLAGS += -O3 -DNDEBUG
@@ -21,6 +21,7 @@ debug: $(OBJECTS)
 	$(CC) $(CPP_FLAGS) $(OBJECTS) device_linked.o -o main $(LIB) 
 
 $(BUILDDIR)/main.o: main.cpp 
+	@mkdir -p $(BUILDDIR)	
 	$(CC) $(CPP_FLAGS) main.cpp -c $(INC) -o $@
 
 $(BUILDDIR)/cuda_allocator.o: cuda_allocator.cpp cuda_allocator.hpp 
@@ -31,6 +32,9 @@ $(BUILDDIR)/simulation_context.o: simulation_context.cu simulation_context.hpp
 
 $(BUILDDIR)/gpu_functions.o: gpu_functions.cu gpu_functions.hpp
 	nvcc $(CUDA_FLAGS) gpu_functions.cu -c -o $@
+
+$(BUILDDIR)/extended_collision.o: extended_collision.cu extended_collision.hpp 
+	nvcc $(CUDA_FLAGS) extended_collision.cu -c -o $@
 	
 $(BUILDDIR)/gpu_constants.o: gpu_constants.cu gpu_constants.hpp
 	nvcc $(CUDA_FLAGS) gpu_constants.cu -c -o $@

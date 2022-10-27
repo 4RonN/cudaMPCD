@@ -22,9 +22,6 @@ __global__ void srd_collision( async_vector< particle_type > particles, gpu_volu
                                xoshiro128plus* generator, math::vektor grid_shift, gpu_vector< uint32_t > uniform_counter, 
                                gpu_vector< uint32_t > uniform_list, uint32_t const shared_bytes );
 
-__global__ void extended_collision( math::vektor grid_shift, gpu_vector< uint32_t > uniform_counter, 
-                                    gpu_vector< uint32_t > uniform_list, uint32_t const shared_bytes );
-
 namespace sampling
 {
     __global__ void add_particles( parameter_set parameters, gpu_volumetric_container< mpc_cell_type > mpc_cells, async_vector< particle_type > particles );
