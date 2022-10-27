@@ -3,6 +3,7 @@
 
 #include "simulation_context.hpp"
 #include "gpu_functions.hpp"
+#include "extended_collision.hpp"
 #include "h5cpp.hpp"
 #include "gpu_constants.hpp"
 
