@@ -6,6 +6,7 @@
 #include <cuda_profiler_api.h>
 
 #include "vektor_type.hpp"
+#include "mechanic.hpp"
 
 namespace gpu_utilities
 {
@@ -126,6 +127,12 @@ namespace gpu_utilities
     {
        return { group_sum( v.x, mask, group_size ), group_sum( v.y, mask, group_size ), group_sum( v.z, mask, group_size ) };
     } 
+    
+    __device__ __inline__ symmetric_matrix< float_type > group_sum( traegheitsmoment< float_type > I, unsigned mask, unsigned group_size )
+    {
+       return { group_sum( I.xx, mask, group_size ), group_sum( I.yy, mask, group_size ), group_sum( I.zz, mask, group_size ), 
+                group_sum( I.xy, mask, group_size ), group_sum( I.xz, mask, group_size ), group_sum( I.yz, mask, group_size ) };
+    }
    
     template< typename T > 
     __device__ __inline__ T group_share( T t, unsigned mask, unsigned group_size )

@@ -26,6 +26,12 @@ enum experiment_type
     standart,
     channel,
 };
+
+enum mpcd_type 
+{
+    srd,
+    extended,
+};
     
 /**
  *  @brief parameter_set and settings that are handed through the program.
@@ -36,6 +42,7 @@ struct parameter_set
     using vektor     = math::vektor;
     
     experiment_type experiment;
+    mpcd_type       algorithm;
 
     int_vektor   periodicity,
                  domain_periodicity, 
@@ -115,6 +122,14 @@ struct parameter_set
         std::getline( input_file, parameter_name ); std::getline( input_file, parameter_name ); std::getline( input_file, parameter_name ); 
        
         // fluid parameters:
+
+        input_file >> parameter_name >> branch;
+        if ( branch == "srd" )
+            parameters.algorithm = srd;
+        else if ( branch == "extended" )
+            parameters.algorithm = extended;
+
+        std::cout << "using " << branch <<   " MPCD alrogrithm" << std::endl;
 
         input_file >> parameter_name >> parameters.n; 
         input_file >> parameter_name >> parameters.temperature;

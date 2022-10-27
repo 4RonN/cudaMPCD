@@ -9,6 +9,7 @@
 
         ------------ fluid -------------
 
+        algorithm               extended
         density                       10
         temperature                  1.0
         delta_t                     0.02

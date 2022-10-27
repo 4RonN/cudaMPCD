@@ -19,19 +19,6 @@ simulation_context::simulation_context( parameter_set const& parameters ) :
                                                                        internal_step_counter( 0 ),
                                                                        resort_rate( 100 )
 {
-    // load members into GPU's constant memory:
-    cudaMemcpyToSymbol( gpu_const::parameters, &( parameters ), sizeof( parameter_set ) ); 
-    error_check( "symbol parameters" );
-    cudaMemcpyToSymbol( gpu_const::particles, &( particles ), sizeof( decltype( particles ) ) ); 
-    error_check( "symbol particles" );
-    cudaMemcpyToSymbol( gpu_const::generator, &( generator ), sizeof( decltype( generator ) ) ); 
-    error_check( "symbol particles" );
-    cudaMemcpyToSymbol( gpu_const::mpc_cells, &mpc_cells, sizeof( decltype( mpc_cells ) ) ); 
-    error_check( "symbol mpc_cells" );
-    cudaMemcpyToSymbol( gpu_const::uniform_list, &uniform_list, sizeof( decltype( uniform_list ) ) ); 
-    error_check( "symbol uniform_list" );
-    cudaMemcpyToSymbol( gpu_const::uniform_counter, &uniform_counter, sizeof( decltype( uniform_counter ) ) ); 
-    error_check( "symbol uniform_counter" );
 
     // seed the parallel random number generators
     generator.alloc( parameters.block_size * parameters.sharing_blocks );
@@ -45,6 +32,20 @@ simulation_context::simulation_context( parameter_set const& parameters ) :
         initialize::random_number_generators <<< parameters.block_count, parameters.block_size >>> ( generator, seed );                                                     
         error_check( "initialise_generators" );
     }
+
+    // load members into GPU's constant memory:
+    cudaMemcpyToSymbol( gpu_const::parameters, &( parameters ), sizeof( parameter_set ) ); 
+    error_check( "symbol parameters" );
+    cudaMemcpyToSymbol( gpu_const::particles, &( particles ), sizeof( decltype( particles ) ) ); 
+    error_check( "symbol particles" );
+    cudaMemcpyToSymbol( gpu_const::generator, &( generator ), sizeof( decltype( generator ) ) ); 
+    error_check( "symbol particles" );
+    cudaMemcpyToSymbol( gpu_const::mpc_cells, &mpc_cells, sizeof( decltype( mpc_cells ) ) ); 
+    error_check( "symbol mpc_cells" );
+    cudaMemcpyToSymbol( gpu_const::uniform_list, &uniform_list, sizeof( decltype( uniform_list ) ) ); 
+    error_check( "symbol uniform_list" );
+    cudaMemcpyToSymbol( gpu_const::uniform_counter, &uniform_counter, sizeof( decltype( uniform_counter ) ) ); 
+    error_check( "symbol uniform_counter" );
     
     // initialize SRD fluid particles 
     grid_shift = { random.uniform_float() - float_type( 0.5 ), 
@@ -150,7 +151,19 @@ void simulation_context::translation_step( parameter_set const& parameters )
 void simulation_context::collision_step( parameter_set const& parameters )
 {
     mpc_cells.set( 0 );
-    srd_collision <<< parameters.sharing_blocks, 32, parameters.shared_bytes >>> ( particles, mpc_cells, generator.data(), grid_shift, 
-                                                                                   uniform_counter, uniform_list, parameters.shared_bytes );
+    
+    switch ( parameters.algorithm )
+    {
+        case srd: 
+            srd_collision <<< parameters.sharing_blocks, 32, parameters.shared_bytes >>> ( particles, mpc_cells, generator.data(), grid_shift, 
+                                                                                           uniform_counter, uniform_list, parameters.shared_bytes );
+            break;
+        case extended:
+            extended_collision <<< parameters.sharing_blocks, 32, parameters.shared_bytes >>> ( grid_shift, uniform_counter, uniform_list, parameters.shared_bytes );
+            break;
+        default:
+            break;
+    }
+
     error_check( "collision_step" );
 }
