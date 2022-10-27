@@ -18,31 +18,30 @@ all: $(OBJECTS)
 debug: CPP_FLAGS += -g -DNDEBUG
 debug: CUDA_FLAGS += -G -g -DNDEBUG
 debug: $(OBJECTS)	
-	nvcc $(CUDA_FLAGS) $(OBJECTS) -dlink -o device_linked.o -lcudadevrt 
-	$(CC) $(CPP_FLAGS) $(OBJECTS) device_linked.o -o main $(LIB) 
+	nvcc $(CUDA_FLAGS) $(OBJECTS) -dlink -o $(SRCDIR)/device_linked.o -lcudadevrt 
+	$(CC) $(CPP_FLAGS) $(OBJECTS) $(SRCDIR)/device_linked.o -o main $(LIB) 
 
 $(BUILDDIR)/main.o: $(SRCDIR)/main.cpp 
 	@mkdir -p $(BUILDDIR)	
-	@echo $(SRCDIR)/cuda_allocator.hpp
-	$(CC) $(CPP_FLAGS) main.cpp -c $(INC) -o $@
+	$(CC) $(CPP_FLAGS) $(SRCDIR)/main.cpp -c $(INC) -o $@
 
 $(BUILDDIR)/cuda_allocator.o: $(SRCDIR)/cuda_allocator.cpp 
-	nvcc $(CUDA_FLAGS) cuda_allocator.cpp -c $(INC) -o $@
+	nvcc $(CUDA_FLAGS) $(SRCDIR)/cuda_allocator.cpp -c $(INC) -o $@
 
 $(BUILDDIR)/simulation_context.o: $(SRCDIR)/simulation_context.cu 
-	nvcc $(CUDA_FLAGS) simulation_context.cu -c $(INC) -o $@
+	nvcc $(CUDA_FLAGS) $(SRCDIR)/simulation_context.cu -c $(INC) -o $@
 
 $(BUILDDIR)/gpu_functions.o: $(SRCDIR)/gpu_functions.cu
-	nvcc $(CUDA_FLAGS) gpu_functions.cu -c $(INC) -o $@
+	nvcc $(CUDA_FLAGS) $(SRCDIR)/gpu_functions.cu -c $(INC) -o $@
 
 $(BUILDDIR)/extended_collision.o: $(SRCDIR)/extended_collision.cu 
-	nvcc $(CUDA_FLAGS) extended_collision.cu -c $(INC) -o $@
+	nvcc $(CUDA_FLAGS) $(SRCDIR)/extended_collision.cu -c $(INC) -o $@
 	
 $(BUILDDIR)/gpu_constants.o: $(SRCDIR)/gpu_constants.cu
-	nvcc $(CUDA_FLAGS) gpu_constants.cu -c $(INC) -o $@
+	nvcc $(CUDA_FLAGS) $(SRCDIR)/gpu_constants.cu -c $(INC) -o $@
 
 $(BUILDDIR)/h5cpp.o: $(SRCDIR)/h5cpp.cpp 
-	$(CC) $(CPP_FLAGS) -Wno-unused-parameter h5cpp.cpp -c $(INC) -o $@ 
+	$(CC) $(CPP_FLAGS) -Wno-unused-parameter $(SRCDIR)/h5cpp.cpp -c $(INC) -o $@ 
 
 clean: 
 	rm -f $(BUILDDIR)/*.o
