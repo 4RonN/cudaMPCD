@@ -1,11 +1,11 @@
 CC := h5c++
 BUILDDIR := build
-SRCDIR := include
+SRCDIR := src
 
 CPP_FLAGS := -std=c++17 -Wall -Wpedantic -Wextra -Werror=shadow
 CUDA_FLAGS := -std=c++17 -ccbin g++ --compiler-options -Wall,-Wextra -arch=sm_61 --expt-extended-lambda -rdc=true
 LIB := -L $(CUDA)/lib64 -lcudart 
-INC := -I $(CUDA)/include -I $(SRCDIR) 
+INC := -I $(CUDA)/include -I include 
 
 OBJECTS := main.o cuda_allocator.o simulation_context.o gpu_functions.o extended_collision.o gpu_constants.o h5cpp.o 
 OBJECTS := $(addprefix $(BUILDDIR)/,$(OBJECTS))
@@ -21,27 +21,27 @@ debug: $(OBJECTS)
 	nvcc $(CUDA_FLAGS) $(OBJECTS) -dlink -o device_linked.o -lcudadevrt 
 	$(CC) $(CPP_FLAGS) $(OBJECTS) device_linked.o -o main $(LIB) 
 
-$(BUILDDIR)/main.o: main.cpp 
+$(BUILDDIR)/main.o: $(SRCDIR)/main.cpp 
 	@mkdir -p $(BUILDDIR)	
 	@echo $(SRCDIR)/cuda_allocator.hpp
 	$(CC) $(CPP_FLAGS) main.cpp -c $(INC) -o $@
 
-$(BUILDDIR)/cuda_allocator.o: cuda_allocator.cpp $(SRCDIR)/cuda_allocator.hpp 
+$(BUILDDIR)/cuda_allocator.o: $(SRCDIR)/cuda_allocator.cpp 
 	nvcc $(CUDA_FLAGS) cuda_allocator.cpp -c $(INC) -o $@
 
-$(BUILDDIR)/simulation_context.o: simulation_context.cu $(SRCDIR)/simulation_context.hpp 
+$(BUILDDIR)/simulation_context.o: $(SRCDIR)/simulation_context.cu 
 	nvcc $(CUDA_FLAGS) simulation_context.cu -c $(INC) -o $@
 
-$(BUILDDIR)/gpu_functions.o: gpu_functions.cu $(SRCDIR)/gpu_functions.hpp
+$(BUILDDIR)/gpu_functions.o: $(SRCDIR)/gpu_functions.cu
 	nvcc $(CUDA_FLAGS) gpu_functions.cu -c $(INC) -o $@
 
-$(BUILDDIR)/extended_collision.o: extended_collision.cu $(SRCDIR)/extended_collision.hpp 
+$(BUILDDIR)/extended_collision.o: $(SRCDIR)/extended_collision.cu 
 	nvcc $(CUDA_FLAGS) extended_collision.cu -c $(INC) -o $@
 	
-$(BUILDDIR)/gpu_constants.o: gpu_constants.cu $(SRCDIR)/gpu_constants.hpp
+$(BUILDDIR)/gpu_constants.o: $(SRCDIR)/gpu_constants.cu
 	nvcc $(CUDA_FLAGS) gpu_constants.cu -c $(INC) -o $@
 
-$(BUILDDIR)/h5cpp.o: h5cpp.cpp $(SRCDIR)/h5cpp.hpp 
+$(BUILDDIR)/h5cpp.o: $(SRCDIR)/h5cpp.cpp 
 	$(CC) $(CPP_FLAGS) -Wno-unused-parameter h5cpp.cpp -c $(INC) -o $@ 
 
 clean: 
