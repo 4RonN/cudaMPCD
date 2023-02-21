@@ -9,7 +9,7 @@
 #include "particle_type.hpp"
 #include "probing.hpp"
 
-struct simulation_context 
+class simulation_context 
 {
     using vektor     = math::vektor;
     using float_type = math::float_type;
@@ -30,16 +30,6 @@ struct simulation_context
         
     gpu_vector< xoshiro128plus >                    generator;  // random number generators for the gpu
     xorshift1024star                                random;     // random number generatofor the cpu
-
-    // routines:
-    simulation_context( parameter_set const& );  // initialization
-    void perform_step( parameter_set const& );   // perform one entire simulation step. 
-
-    // data io:
-    void write_sample( size_t step, parameter_set parameters );
-    void write_backup_file();
-
-    private:
    
     // To furthe optimize memory loading, the particle array is sorted according to the SRD cell-index.
     // This enables array striding, ie. coalesced memory loading:
@@ -47,6 +37,16 @@ struct simulation_context
 
     void translation_step( parameter_set const& );  // SRD streaming step
     void collision_step( parameter_set const& );    // SRD collision step
+    
+    public:
+    
+    // routines:
+    simulation_context( parameter_set const& );  // initialization
+    void perform_step( parameter_set const& );   // perform one entire simulation step. 
+
+    // data io:
+    void write_sample( size_t step, parameter_set parameters );
+    void write_backup_file();
 };
 
 #endif // __SIMULATION_CONTEXT_HPP
